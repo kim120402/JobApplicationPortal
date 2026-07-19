@@ -1,1 +1,4 @@
 # JobApplicationPortal
+
+
+#JpaRepository Methods

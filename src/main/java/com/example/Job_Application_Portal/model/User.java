@@ -1,6 +1,10 @@
 package com.example.Job_Application_Portal.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,9 +19,13 @@ public class User {
     private String fullName;
 
     @Column(nullable = false, unique = true, length = 100)
+    @NotBlank(message = "Full name is required")
+    @Email(message = "Please enter a valid email address")
     private String email;
 
+    @NotBlank(message = "Password is required")
     @Column(nullable = false, length = 255)
+    @Size(min = 6, message = "Password must contain at least 6 characters")
     private String password;
 
     @Column(nullable = false, length = 50)
@@ -83,5 +91,18 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // Automatic set registration data
+    @PrePersist
+    public void setDefaultValues() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+
+        // do not allow ADMIN from public registration
+        if (role == null || role.isBlank()) {
+            role = "APPLICANT";
+        }
     }
 }
