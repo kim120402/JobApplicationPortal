@@ -16,10 +16,11 @@ public class User {
     private Long userId;
 
     @Column(name = "full_name", nullable = false, length = 100)
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
     @Column(nullable = false, unique = true, length = 100)
-    @NotBlank(message = "Full name is required")
+    @NotBlank(message = "Email is required")
     @Email(message = "Please enter a valid email address")
     private String email;
 
