@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links admin-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:href="@{/admin/applications}">Applications</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <p class="success-message" th:if="${successMessage}" th:text="${successMessage}"></p>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <article class="details-panel" th:if="${jobApplication != null}">
+        <h1>Application Details</h1>
+        <p><strong>Applicant:</strong> <span th:text="${jobApplication.user != null ? jobApplication.user.fullName : 'Applicant unavailable'}">Full Name</span></p>
+        <p><strong>Email:</strong> <span th:text="${jobApplication.user != null ? jobApplication.user.email : 'Email unavailable'}">email@example.com</span></p>
+        <p><strong>Job:</strong> <span th:text="${jobApplication.job != null ? jobApplication.job.title : 'Job unavailable'}">Job Title</span></p>
+        <p><strong>Company:</strong> <span th:text="${jobApplication.job != null ? jobApplication.job.companyName : 'Company unavailable'}">Company</span></p>
+        <p><strong>Location:</strong> <span th:text="${jobApplication.job != null ? jobApplication.job.location : 'Location unavailable'}">Location</span></p>
+        <p><strong>Employment Type:</strong> <span th:text="${jobApplication.job != null ? jobApplication.job.employmentType : 'Employment type unavailable'}">Employment Type</span></p>
+        <p><strong>Resume:</strong> <span th:text="${jobApplication.resumeFileName != null ? jobApplication.resumeFileName : 'Resume unavailable'}">resume.pdf</span></p>
+        <p><strong>Applied Date:</strong> <span th:text="${jobApplication.appliedDate != null ? #temporals.format(jobApplication.appliedDate, 'yyyy-MM-dd HH:mm') : 'Date unavailable'}">Date</span></p>
+        <p>
+            <strong>Status:</strong>
+            <span class="status-badge"
+                  th:classappend="${' status-' + #strings.toLowerCase(#strings.replace(jobApplication.applicationStatus != null ? jobApplication.applicationStatus : 'UNKNOWN', '_', '-'))}"
+                  th:text="${jobApplication.applicationStatus != null ? #strings.replace(jobApplication.applicationStatus, '_', ' ') : 'Status unavailable'}">Applied</span>
+        </p>
+        <section>
+            <h2>Cover Letter</h2>
+            <p th:text="${!#strings.isEmpty(jobApplication.coverLetter) ? jobApplication.coverLetter : 'No cover letter provided.'}">Cover letter</p>
+        </section>
+        <div class="button-row">
+            <a class="btn" th:href="@{/admin/applications/{id}/status(id=${jobApplication.applicationId})}">Update Status</a>
+            <a class="btn btn-secondary" th:href="@{/admin/applications/{id}/resume(id=${jobApplication.applicationId})}">Download Resume</a>
+            <a class="btn btn-secondary" th:href="@{/admin/applications}">Back to Applications</a>
+            <a class="btn btn-secondary" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+        </div>
+    </article>
+
+    <p class="empty-message" th:if="${jobApplication == null}">Application not found.</p>
+</main>
+</body>
+</html>

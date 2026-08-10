@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
@@ -18,24 +19,31 @@ public class Job {
     private Long jobId;
 
     @Column(name = "title", nullable = false, length = 100)
+    @NotBlank(message = "Job title is required")
     private String title;
 
     @Column(name = "company_name", nullable = false, length = 100)
+    @NotBlank(message = "Company name is required")
     private String companyName;
 
     @Column(name = "location", nullable = false, length = 100)
+    @NotBlank(message = "Location is required")
     private String location;
 
     @Column(name = "category", nullable = false, length = 100)
+    @NotBlank(message = "Category is required")
     private String category;
 
     @Column(name = "employment_type", nullable = false, length = 50)
+    @NotBlank(message = "Employment type is required")
     private String employmentType;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @NotBlank(message = "Job description is required")
     private String description;
 
     @Column(name = "requirements", nullable = false, columnDefinition = "TEXT")
+    @NotBlank(message = "Job requirements are required")
     private String requirements;
 
     @Column(name = "status", nullable = false, length = 50)

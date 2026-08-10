@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something Went Wrong</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:href="@{/login}">Login</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container details-panel">
+    <h1>Something went wrong</h1>
+    <p>We could not complete that request. Please try again or return to the home page.</p>
+    <div class="button-row">
+        <a class="btn" th:href="@{/}">Home</a>
+        <button type="button" onclick="history.back()">Back</button>
+    </div>
+</main>
+</body>
+</html>

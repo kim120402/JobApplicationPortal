@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,7 +39,7 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void submitApplicationCreatesSubmittedApplication() {
+    void submitApplicationCreatesAppliedApplication() {
         User user = applicant();
         Job job = activeJob();
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -57,8 +58,22 @@ class ApplicationServiceTest {
         assertThat(application.getJob()).isSameAs(job);
         assertThat(application.getResumeFileName()).isEqualTo("resume.pdf");
         assertThat(application.getCoverLetter()).isEqualTo("I am interested.");
-        assertThat(application.getApplicationStatus()).isEqualTo(ApplicationService.STATUS_SUBMITTED);
+        assertThat(application.getApplicationStatus()).isEqualTo(ApplicationService.STATUS_APPLIED);
         assertThat(application.getAppliedDate()).isNotNull();
+    }
+
+    @Test
+    void newApplicationReceivesAppliedStatus() {
+        User user = applicant();
+        Job job = activeJob();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(jobRepository.findById(2L)).thenReturn(Optional.of(job));
+        when(applicationRepository.existsByUserUserIdAndJobJobId(1L, 2L)).thenReturn(false);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Application application = applicationService.submitApplication(1L, 2L, "resume.pdf", null);
+
+        assertThat(application.getApplicationStatus()).isEqualTo("APPLIED");
     }
 
     @Test
@@ -94,10 +109,36 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void updateApplicationStatusRejectsUnknownApplication() {
-        when(applicationRepository.findById(50L)).thenReturn(Optional.empty());
+    void submitApplicationRejectsAdminUser() {
+        User user = applicant();
+        user.setRole("ADMIN");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(jobRepository.findById(2L)).thenReturn(Optional.of(activeJob()));
 
-        assertThatThrownBy(() -> applicationService.updateApplicationStatus(50L, ApplicationService.STATUS_REVIEWED))
+        assertThatThrownBy(() -> applicationService.submitApplication(1L, 2L, "resume.pdf", null))
+                .isInstanceOf(InvalidOperationException.class)
+                .hasMessage("Only applicants can submit job applications");
+
+        verify(applicationRepository, never()).save(any(Application.class));
+    }
+
+    @Test
+    void getApplicationsByUserReturnsOnlyThatUsersApplications() {
+        Application application = new Application();
+        when(applicationRepository.findByUserUserIdWithUserAndJobOrderByAppliedDateDesc(1L))
+                .thenReturn(List.of(application));
+
+        List<Application> applications = applicationService.getApplicationsByUser(1L);
+
+        assertThat(applications).containsExactly(application);
+        verify(applicationRepository).findByUserUserIdWithUserAndJobOrderByAppliedDateDesc(1L);
+    }
+
+    @Test
+    void updateApplicationStatusRejectsUnknownApplication() {
+        when(applicationRepository.findByIdWithUserAndJob(50L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> applicationService.updateApplicationStatus(50L, ApplicationService.STATUS_UNDER_REVIEW))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Application not found");
     }
@@ -105,12 +146,12 @@ class ApplicationServiceTest {
     @Test
     void updateApplicationStatusSavesNormalizedStatus() {
         Application application = new Application();
-        when(applicationRepository.findById(5L)).thenReturn(Optional.of(application));
+        when(applicationRepository.findByIdWithUserAndJob(5L)).thenReturn(Optional.of(application));
         when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Application updatedApplication = applicationService.updateApplicationStatus(5L, " reviewed ");
+        Application updatedApplication = applicationService.updateApplicationStatus(5L, " under_review ");
 
-        assertThat(updatedApplication.getApplicationStatus()).isEqualTo(ApplicationService.STATUS_REVIEWED);
+        assertThat(updatedApplication.getApplicationStatus()).isEqualTo(ApplicationService.STATUS_UNDER_REVIEW);
     }
 
     private User applicant() {

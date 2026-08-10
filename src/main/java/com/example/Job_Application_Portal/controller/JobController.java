@@ -2,13 +2,14 @@ package com.example.Job_Application_Portal.controller;
 
 import com.example.Job_Application_Portal.model.Job;
 import com.example.Job_Application_Portal.service.JobService;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
 
 @Controller
 public class JobController {
@@ -19,37 +20,58 @@ public class JobController {
         this.jobService = jobService;
     }
 
-    @GetMapping("/job")
-    public String showCreateJobForm(Model model) {
-
-        model.addAttribute("job", new Job());
-
-        return "create-job";
+    @GetMapping("/jobs")
+    public String showJobs(HttpSession session, Model model) {
+        model.addAttribute("jobs", jobService.getActiveJobs());
+        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        return "jobs";
     }
 
-    @PostMapping("/job")
-    public String createJob(
-            @Valid @ModelAttribute("job") Job job,
-            BindingResult result,
+    @GetMapping("/jobs/{jobId}")
+    public String showJobDetails(@PathVariable Long jobId, HttpSession session, Model model) {
+        model.addAttribute("job", jobService.getJobById(jobId));
+        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        return "job-details";
+    }
+
+    @GetMapping("/jobs/search")
+    public String searchJobs(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String employmentType,
+            HttpSession session,
             Model model
     ) {
-        // If validation errors are found, return to the form
-        if (result.hasErrors()) {
-            return "create-job";
+        List<Job> jobs = jobService.getActiveJobs().stream()
+                .filter(job -> containsIgnoreCase(job.getTitle(), title))
+                .filter(job -> containsIgnoreCase(job.getLocation(), location))
+                .filter(job -> equalsIgnoreCase(job.getCategory(), category))
+                .filter(job -> equalsIgnoreCase(job.getEmploymentType(), employmentType))
+                .toList();
+
+        model.addAttribute("jobs", jobs);
+        model.addAttribute("title", title);
+        model.addAttribute("location", location);
+        model.addAttribute("category", category);
+        model.addAttribute("employmentType", employmentType);
+        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        return "jobs";
+    }
+
+    private boolean containsIgnoreCase(String value, String searchTerm) {
+        if (searchTerm == null || searchTerm.isBlank()) {
+            return true;
         }
 
-        try {
-            jobService.createJob(job);
+        return value != null && value.toLowerCase().contains(searchTerm.trim().toLowerCase());
+    }
 
-            return "redirect:/jobs";
-
-        } catch (RuntimeException exception) {
-            model.addAttribute(
-                    "errorMessage",
-                    exception.getMessage()
-            );
-
-            return "create-job";
+    private boolean equalsIgnoreCase(String value, String searchTerm) {
+        if (searchTerm == null || searchTerm.isBlank()) {
+            return true;
         }
+
+        return value != null && value.equalsIgnoreCase(searchTerm.trim());
     }
 }

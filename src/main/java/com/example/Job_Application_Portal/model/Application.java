@@ -12,30 +12,39 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "applications")
+@Table(name = "applications") // tell JPA that this class represent database table
 public class Application {
+
+    // This is primary key and generate ID automatically
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "application_id")
     private Long applicationId;
 
+    // Many applications can belong to one user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Many applications can belong to one job
     @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
+    // Store resume filename. Required and 255 character max
     @Column(name = "resume_file_name", nullable = false, length = 255)
     private String resumeFileName;
 
+    // TEXT is used because a cover letter can be much longer than a normal short string
     @Column(name = "cover_letter", columnDefinition = "TEXT")
     private String coverLetter;
 
+    // Every application must have status and 50 max character
+    // APPLIED, UNDER_REVIEW, INTERVIEW, REJECTED, HIRED
     @Column(name = "application_status", nullable = false, length = 50)
     private String applicationStatus;
 
+    // stores the date and time when the applicant submitted the application
     @Column(name = "applied_date", nullable = false)
     private LocalDateTime appliedDate;
 

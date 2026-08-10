@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/dashboard}">Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/applications}">My Applications</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/login}">Login</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/register}">Register</a>
+            <form th:if="${loggedInUser != null}" th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Browse Jobs</h1>
+        <p>View active co-op and internship opportunities.</p>
+    </div>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <form class="search-form" th:action="@{/jobs/search}" method="get">
+        <div>
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" th:value="${title}">
+        </div>
+        <div>
+            <label for="location">Location</label>
+            <input id="location" name="location" type="text" th:value="${location}">
+        </div>
+        <div>
+            <label for="category">Category</label>
+            <input id="category" name="category" type="text" th:value="${category}">
+        </div>
+        <div>
+            <label for="employmentType">Employment Type</label>
+            <input id="employmentType" name="employmentType" type="text" th:value="${employmentType}">
+        </div>
+        <div class="form-actions">
+            <button type="submit">Search</button>
+            <a class="btn btn-secondary" th:href="@{/jobs}">Clear</a>
+        </div>
+    </form>
+
+    <p class="empty-message" th:if="${#lists.isEmpty(jobs)}">No active jobs found.</p>
+
+    <div class="job-grid" th:if="${!#lists.isEmpty(jobs)}">
+        <article class="job-card" th:each="job : ${jobs}">
+            <h2 th:text="${job.title}">Job Title</h2>
+            <p class="company" th:text="${job.companyName}">Company</p>
+            <p>
+                <span th:text="${job.location}">Location</span>
+                <span> | </span>
+                <span th:text="${job.employmentType}">Employment Type</span>
+            </p>
+            <p class="tag" th:text="${job.category}">Category</p>
+            <a class="btn btn-small" th:href="@{/jobs/{jobId}(jobId=${job.jobId})}">View Details</a>
+        </article>
+    </div>
+</main>
+</body>
+</html>

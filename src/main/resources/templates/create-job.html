@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links admin-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:href="@{/admin/applications}">Applications</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container form-container">
+    <h1>Create Job</h1>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <form th:action="@{/admin/jobs/new}" th:object="${job}" method="post">
+        <div>
+            <label for="title">Title</label>
+            <input id="title" type="text" th:field="*{title}">
+            <p class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+        </div>
+
+        <div>
+            <label for="companyName">Company Name</label>
+            <input id="companyName" type="text" th:field="*{companyName}">
+            <p class="error-message" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></p>
+        </div>
+
+        <div>
+            <label for="location">Location</label>
+            <input id="location" type="text" th:field="*{location}">
+            <p class="error-message" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></p>
+        </div>
+
+        <div>
+            <label for="category">Category</label>
+            <input id="category" type="text" th:field="*{category}">
+            <p class="error-message" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></p>
+        </div>
+
+        <div>
+            <label for="employmentType">Employment Type</label>
+            <select id="employmentType" th:field="*{employmentType}">
+                <option value="">Select employment type</option>
+                <option value="CO_OP">CO_OP</option>
+                <option value="INTERNSHIP">INTERNSHIP</option>
+                <option value="FULL_TIME">FULL_TIME</option>
+                <option value="PART_TIME">PART_TIME</option>
+            </select>
+            <p class="error-message" th:if="${#fields.hasErrors('employmentType')}" th:errors="*{employmentType}"></p>
+        </div>
+
+        <div>
+            <label for="description">Description</label>
+            <textarea id="description" th:field="*{description}"></textarea>
+            <p class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+        </div>
+
+        <div>
+            <label for="requirements">Requirements</label>
+            <textarea id="requirements" th:field="*{requirements}"></textarea>
+            <p class="error-message" th:if="${#fields.hasErrors('requirements')}" th:errors="*{requirements}"></p>
+        </div>
+
+        <div>
+            <label for="status">Status</label>
+            <select id="status" th:field="*{status}">
+                <option value="">Select status</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="CLOSED">CLOSED</option>
+            </select>
+        </div>
+
+        <button type="submit">Create Job</button>
+    </form>
+</main>
+</body>
+</html>

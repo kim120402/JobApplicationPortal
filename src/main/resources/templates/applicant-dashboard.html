@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:href="@{/applicant/applications}">My Applications</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container dashboard">
+    <h1>Applicant Dashboard</h1>
+    <p>Welcome, <strong th:text="${user.fullName}">Full Name</strong>.</p>
+    <p>Role: <strong th:text="${user.role}">Role</strong></p>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span th:text="${totalApplications}">0</span>
+            <p>Total Applications</p>
+        </div>
+        <div class="stat-card">
+            <span th:text="${underReviewCount}">0</span>
+            <p>Under Review</p>
+        </div>
+        <div class="stat-card">
+            <span th:text="${interviewCount}">0</span>
+            <p>Interview</p>
+        </div>
+        <div class="stat-card">
+            <span th:text="${hiredCount}">0</span>
+            <p>Hired</p>
+        </div>
+    </section>
+
+    <div class="button-row">
+        <a class="btn" th:href="@{/jobs}">Browse Jobs</a>
+        <a class="btn btn-secondary" th:href="@{/applicant/applications}">My Applications</a>
+    </div>
+
+</main>
+</body>
+</html>

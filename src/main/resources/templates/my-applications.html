@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/applicant/dashboard}">Dashboard</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1>My Applications</h1>
+        <p th:text="'Applications submitted by ' + ${user.fullName}">Applicant applications</p>
+    </div>
+    <p class="success-message" th:if="${successMessage}" th:text="${successMessage}"></p>
+
+    <p class="empty-message" th:if="${#lists.isEmpty(applications)}">
+        You have not submitted any applications yet.
+    </p>
+
+    <div class="application-list" th:if="${!#lists.isEmpty(applications)}">
+        <article class="application-card" th:each="jobApplication : ${applications}">
+            <div>
+                <h2 th:text="${jobApplication.job != null ? jobApplication.job.title : 'Job unavailable'}">Job Title</h2>
+                <p class="company" th:text="${jobApplication.job != null ? jobApplication.job.companyName : 'Company unavailable'}">Company</p>
+                <p th:text="${jobApplication.job != null ? jobApplication.job.location : 'Location unavailable'}">Location</p>
+            </div>
+
+            <div class="application-details">
+                <p>
+                    <strong>Date applied:</strong>
+                    <span th:text="${jobApplication.appliedDate != null ? #temporals.format(jobApplication.appliedDate, 'yyyy-MM-dd') : 'Date unavailable'}">Date</span>
+                </p>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge"
+                          th:classappend="${' status-' + #strings.toLowerCase(#strings.replace(jobApplication.applicationStatus != null ? jobApplication.applicationStatus : 'UNKNOWN', '_', '-'))}"
+                          th:text="${jobApplication.applicationStatus != null ? #strings.replace(jobApplication.applicationStatus, '_', ' ') : 'Status unavailable'}">Applied</span>
+                </p>
+                <p>
+                    <strong>Resume:</strong>
+                    <span th:text="${jobApplication.resumeFileName != null ? jobApplication.resumeFileName : 'Resume unavailable'}">resume.pdf</span>
+                </p>
+                <p th:if="${!#strings.isEmpty(jobApplication.coverLetter)}">
+                    <strong>Cover letter:</strong>
+                    <span th:text="${jobApplication.coverLetter}">Cover letter</span>
+                </p>
+            </div>
+        </article>
+    </div>
+</main>
+</body>
+</html>

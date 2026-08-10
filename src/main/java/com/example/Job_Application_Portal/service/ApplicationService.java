@@ -17,10 +17,11 @@ import java.util.List;
 
 @Service
 public class ApplicationService {
-    public static final String STATUS_SUBMITTED = "SUBMITTED";
-    public static final String STATUS_REVIEWED = "REVIEWED";
-    public static final String STATUS_ACCEPTED = "ACCEPTED";
+    public static final String STATUS_APPLIED = "APPLIED";
+    public static final String STATUS_UNDER_REVIEW = "UNDER_REVIEW";
+    public static final String STATUS_INTERVIEW = "INTERVIEW";
     public static final String STATUS_REJECTED = "REJECTED";
+    public static final String STATUS_HIRED = "HIRED";
 
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
@@ -73,7 +74,7 @@ public class ApplicationService {
         application.setJob(job);
         application.setResumeFileName(resumeFileName.trim());
         application.setCoverLetter(coverLetter == null ? null : coverLetter.trim());
-        application.setApplicationStatus(STATUS_SUBMITTED);
+        application.setApplicationStatus(STATUS_APPLIED);
         application.setAppliedDate(LocalDateTime.now());
 
         // save application data using save(obj)
@@ -86,7 +87,7 @@ public class ApplicationService {
             throw new ValidationException("Application id is required");
         }
 
-        return applicationRepository.findById(applicationId)
+        return applicationRepository.findByIdWithUserAndJob(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
     }
 
@@ -107,7 +108,26 @@ public class ApplicationService {
             throw new ValidationException("User id is required");
         }
 
-        return applicationRepository.findByUserUserIdOrderByAppliedDateDesc(userId);
+        return applicationRepository.findByUserUserIdWithUserAndJobOrderByAppliedDateDesc(userId);
+    }
+
+    public long countApplicationsByUser(Long userId) {
+        if (userId == null) {
+            throw new ValidationException("User id is required");
+        }
+
+        return applicationRepository.countByUserUserId(userId);
+    }
+
+    public long countUserApplicationsByStatus(Long userId, String status) {
+        if (userId == null) {
+            throw new ValidationException("User id is required");
+        }
+
+        return applicationRepository.countByUserUserIdAndApplicationStatusIgnoreCase(
+                userId,
+                normalizeApplicationStatus(status)
+        );
     }
 
     public List<Application> getApplicationsByJob(Long jobId) {
@@ -115,15 +135,23 @@ public class ApplicationService {
             throw new ValidationException("Job id is required");
         }
 
-        return applicationRepository.findByJobJobIdOrderByAppliedDateDesc(jobId);
+        return applicationRepository.findByJobJobIdWithUserAndJobOrderByAppliedDateDesc(jobId);
+    }
+
+    public boolean jobHasApplications(Long jobId) {
+        if (jobId == null) {
+            throw new ValidationException("Job id is required");
+        }
+
+        return applicationRepository.existsByJobJobId(jobId);
     }
 
     public List<Application> getAllApplications() {
-        return applicationRepository.findAllByOrderByAppliedDateDesc();
+        return applicationRepository.findAllWithUserAndJobOrderByAppliedDateDesc();
     }
 
     public List<Application> getApplicationsByStatus(String status) {
-        return applicationRepository.findByApplicationStatusIgnoreCaseOrderByAppliedDateDesc(
+        return applicationRepository.findByApplicationStatusIgnoreCaseWithUserAndJobOrderByAppliedDateDesc(
                 normalizeApplicationStatus(status)
         );
     }
@@ -138,17 +166,24 @@ public class ApplicationService {
         return applicationRepository.countByApplicationStatusIgnoreCase(normalizeApplicationStatus(status));
     }
 
+    public long countAllApplications() {
+        return applicationRepository.count();
+    }
+
     private String normalizeApplicationStatus(String status) {
         if (isBlank(status)) {
             throw new ValidationException("Application status is required");
         }
 
         String normalizedStatus = status.trim().toUpperCase();
-        if (!STATUS_SUBMITTED.equals(normalizedStatus)
-                && !STATUS_REVIEWED.equals(normalizedStatus)
-                && !STATUS_ACCEPTED.equals(normalizedStatus)
-                && !STATUS_REJECTED.equals(normalizedStatus)) {
-            throw new ValidationException("Application status must be SUBMITTED, REVIEWED, ACCEPTED, or REJECTED");
+        if (!STATUS_APPLIED.equals(normalizedStatus)
+                && !STATUS_UNDER_REVIEW.equals(normalizedStatus)
+                && !STATUS_INTERVIEW.equals(normalizedStatus)
+                && !STATUS_REJECTED.equals(normalizedStatus)
+                && !STATUS_HIRED.equals(normalizedStatus)) {
+            throw new ValidationException(
+                    "Application status must be APPLIED, UNDER_REVIEW, INTERVIEW, REJECTED, or HIRED"
+            );
         }
 
         return normalizedStatus;

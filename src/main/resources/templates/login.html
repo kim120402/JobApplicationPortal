@@ -2,15 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<main>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}">Register</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container form-container">
     <h1>Login</h1>
 
-    <p th:if="${param.registered}">Registration successful. Please log in.</p>
-    <p th:if="${param.logout}">You have been logged out.</p>
-    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <p class="success-message" th:if="${param.registered}">Registration successful. Please log in.</p>
+    <p class="success-message" th:if="${param.logout}">You have been logged out.</p>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
 
     <form th:action="@{/login}" method="post">
         <div>

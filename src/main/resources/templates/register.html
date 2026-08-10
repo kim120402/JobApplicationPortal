@@ -2,31 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<main>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}">Register</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container form-container">
     <h1>Create Account</h1>
 
-    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
 
     <form th:action="@{/register}" th:object="${user}" method="post">
         <div>
             <label for="fullName">Full Name</label>
             <input id="fullName" type="text" th:field="*{fullName}">
-            <p th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
+            <p class="error-message" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
         </div>
 
         <div>
             <label for="email">Email</label>
             <input id="email" type="email" th:field="*{email}">
-            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+            <p class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
         </div>
 
         <div>
             <label for="password">Password</label>
             <input id="password" type="password" th:field="*{password}">
-            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+            <p class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
         </div>
 
         <button type="submit">Register</button>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/dashboard}">Applicant Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/applications}">My Applications</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/applications}">Applications</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/login}">Login</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/register}">Register</a>
+            <form th:if="${loggedInUser != null}" th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container hero">
+    <section>
+        <h1>Find A Job</h1>
+        <p>
+            Job Portal helps students browse active job postings, submit applications, upload resumes,
+            and track their application status.
+        </p>
+        <div class="button-row">
+            <a class="btn" th:href="@{/jobs}">Browse Jobs</a>
+            <a class="btn btn-secondary" th:if="${loggedInUser == null}" th:href="@{/register}">Create Account</a>
+            <a class="btn btn-secondary"
+               th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}"
+               th:href="@{/applicant/dashboard}">Applicant Dashboard</a>
+            <a class="btn btn-secondary"
+               th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}"
+               th:href="@{/admin/dashboard}">Admin Dashboard</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

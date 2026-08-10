@@ -3,6 +3,7 @@ package com.example.Job_Application_Portal.service;
 import com.example.Job_Application_Portal.exception.ResourceNotFoundException;
 import com.example.Job_Application_Portal.exception.ValidationException;
 import com.example.Job_Application_Portal.model.Job;
+import com.example.Job_Application_Portal.repository.ApplicationRepository;
 import com.example.Job_Application_Portal.repository.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,14 @@ import static org.mockito.Mockito.when;
 
 class JobServiceTest {
     private JobRepository jobRepository;
+    private ApplicationRepository applicationRepository;
     private JobService jobService;
 
     @BeforeEach
     void setUp() {
         jobRepository = mock(JobRepository.class);
-        jobService = new JobService(jobRepository);
+        applicationRepository = mock(ApplicationRepository.class);
+        jobService = new JobService(jobRepository, applicationRepository);
     }
 
     @Test
@@ -121,7 +124,7 @@ class JobServiceTest {
     private Job validJob() {
         Job job = new Job();
         job.setTitle(" Software Developer Intern ");
-        job.setCompanyName("Co-opConnect");
+        job.setCompanyName("Job Portal");
         job.setLocation("Toronto");
         job.setCategory("Technology");
         job.setEmploymentType("Co-op");

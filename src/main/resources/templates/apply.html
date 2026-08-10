@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:href="@{/applicant/applications}">My Applications</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container form-container">
+    <h1>Apply for <span th:text="${job.title}">Job Title</span></h1>
+    <p class="company" th:text="${job.companyName}">Company Name</p>
+    <p th:text="${job.location}">Location</p>
+
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <form th:action="@{/jobs/{jobId}/apply(jobId=${job.jobId})}" method="post" enctype="multipart/form-data">
+        <div class="file-upload">
+            <label for="resume">Resume</label>
+            <input id="resume" name="resume" type="file" accept=".pdf,.docx" required>
+            <p class="help-text">Accepted formats: PDF or DOCX. Maximum size: 5 MB.</p>
+        </div>
+
+        <div>
+            <label for="coverLetter">Cover Letter</label>
+            <textarea id="coverLetter" name="coverLetter" th:text="${coverLetter}"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">Submit Application</button>
+            <a class="btn btn-secondary" th:href="@{/jobs/{jobId}(jobId=${job.jobId})}">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

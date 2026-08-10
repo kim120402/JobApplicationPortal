@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${job.title}">Job Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/dashboard}">Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'ADMIN')}" th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}" th:href="@{/applicant/applications}">My Applications</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/login}">Login</a>
+            <a th:if="${loggedInUser == null}" th:href="@{/register}">Register</a>
+            <form th:if="${loggedInUser != null}" th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <article class="details-panel">
+        <a class="back-link" th:href="@{/jobs}">Back to jobs</a>
+        <h1 th:text="${job.title}">Job Title</h1>
+        <p class="company" th:text="${job.companyName}">Company</p>
+        <div class="meta-row">
+            <span th:text="${job.location}">Location</span>
+            <span th:text="${job.category}">Category</span>
+            <span th:text="${job.employmentType}">Employment Type</span>
+            <span th:text="${job.postedDate}">Posted Date</span>
+        </div>
+        <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+        <div class="button-row" th:if="${job.status == 'ACTIVE'}">
+            <a class="btn"
+               th:if="${loggedInUser != null and #strings.equalsIgnoreCase(loggedInUser.role, 'APPLICANT')}"
+               th:href="@{/jobs/{jobId}/apply(jobId=${job.jobId})}">Apply Now</a>
+            <a class="btn"
+               th:if="${loggedInUser == null}"
+               th:href="@{/login}">Login to Apply</a>
+        </div>
+        <p class="empty-message" th:if="${job.status != 'ACTIVE'}">This job is closed and no longer accepting applications.</p>
+
+        <section>
+            <h2>Description</h2>
+            <p th:text="${job.description}">Description</p>
+        </section>
+
+        <section>
+            <h2>Requirements</h2>
+            <p th:text="${job.requirements}">Requirements</p>
+        </section>
+    </article>
+</main>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Application Status</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links admin-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:href="@{/admin/applications}">Applications</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container form-container">
+    <h1>Update Application Status</h1>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <div th:if="${jobApplication != null}">
+        <p><strong>Applicant:</strong> <span th:text="${jobApplication.user != null ? jobApplication.user.fullName : 'Applicant unavailable'}">Applicant</span></p>
+        <p><strong>Job:</strong> <span th:text="${jobApplication.job != null ? jobApplication.job.title : 'Job unavailable'}">Job</span></p>
+        <p><strong>Current Status:</strong> <span th:text="${jobApplication.applicationStatus != null ? jobApplication.applicationStatus : 'Status unavailable'}">APPLIED</span></p>
+
+        <form th:action="@{/admin/applications/{id}/status(id=${jobApplication.applicationId})}" method="post">
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="APPLIED" th:selected="${jobApplication.applicationStatus == 'APPLIED'}">APPLIED</option>
+                    <option value="UNDER_REVIEW" th:selected="${jobApplication.applicationStatus == 'UNDER_REVIEW'}">UNDER_REVIEW</option>
+                    <option value="INTERVIEW" th:selected="${jobApplication.applicationStatus == 'INTERVIEW'}">INTERVIEW</option>
+                    <option value="REJECTED" th:selected="${jobApplication.applicationStatus == 'REJECTED'}">REJECTED</option>
+                    <option value="HIRED" th:selected="${jobApplication.applicationStatus == 'HIRED'}">HIRED</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Update</button>
+                <a class="btn btn-secondary" th:href="@{/admin/applications/{id}(id=${jobApplication.applicationId})}">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <p class="empty-message" th:if="${jobApplication == null}">Application not found.</p>
+</main>
+</body>
+</html>

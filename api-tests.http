@@ -1,0 +1,68 @@
+### Public: list jobs
+GET http://localhost:8080/api/jobs
+
+### Public: list active jobs
+GET http://localhost:8080/api/jobs?status=ACTIVE
+
+### Public: get one job
+GET http://localhost:8080/api/jobs/1
+
+### Login first in a REST client and keep the JSESSIONID cookie for protected requests.
+### ADMIN login example. Use your own seeded admin account.
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+email=admin@example.com&password=Admin123!
+
+### ADMIN required: create job
+POST http://localhost:8080/api/jobs
+Content-Type: application/json
+
+{
+  "title": "QA Analyst Co-op",
+  "companyName": "Fictional Testing Ltd",
+  "location": "Toronto",
+  "category": "Technology",
+  "employmentType": "CO_OP",
+  "description": "Test web application features.",
+  "requirements": "Attention to detail and basic SQL.",
+  "status": "ACTIVE"
+}
+
+### ADMIN required: update job
+PUT http://localhost:8080/api/jobs/1
+Content-Type: application/json
+
+{
+  "title": "Updated QA Analyst Co-op",
+  "companyName": "Fictional Testing Ltd",
+  "location": "Toronto",
+  "category": "Technology",
+  "employmentType": "CO_OP",
+  "description": "Test web application features.",
+  "requirements": "Attention to detail and basic SQL.",
+  "status": "ACTIVE"
+}
+
+### ADMIN required: delete job
+DELETE http://localhost:8080/api/jobs/1
+
+### ADMIN required: list applications
+GET http://localhost:8080/api/applications
+
+### ADMIN can view any application; APPLICANT can only view their own application
+GET http://localhost:8080/api/applications/1
+
+### ADMIN required: JDBC dashboard statistics
+GET http://localhost:8080/api/admin/statistics
+
+### ADMIN can view any user; APPLICANT can only request their own user id
+GET http://localhost:8080/api/applications/user/1
+
+### ADMIN required: update application status
+PUT http://localhost:8080/api/applications/1/status
+Content-Type: application/json
+
+{
+  "status": "UNDER_REVIEW"
+}

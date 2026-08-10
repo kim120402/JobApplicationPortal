@@ -73,7 +73,7 @@ public class AuthController {
     public String login(
             @RequestParam String email,
             @RequestParam String password,
-            HttpSession session,
+            HttpSession session, // represent user session, server can remember when they move to other page
             Model model
     ) {
 
@@ -84,7 +84,8 @@ public class AuthController {
 
             User user = userService.loginUser(loginUser);
 
-            // Store the logged-in user in the session
+            // Log in user stored in the session
+            // Even the user moves to another page, the server still knows that the user is logged
             session.setAttribute("loggedInUser", user);
 
             // Redirect based on the user's role

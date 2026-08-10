@@ -1,8 +1,10 @@
 package com.example.Job_Application_Portal.service;
 
+import com.example.Job_Application_Portal.exception.JobDeletionBlockedException;
 import com.example.Job_Application_Portal.exception.ResourceNotFoundException;
 import com.example.Job_Application_Portal.exception.ValidationException;
 import com.example.Job_Application_Portal.model.Job;
+import com.example.Job_Application_Portal.repository.ApplicationRepository;
 import com.example.Job_Application_Portal.repository.JobRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,11 @@ public class JobService {
     public static final String STATUS_CLOSED = "CLOSED";
 
     private final JobRepository jobRepository;
+    private final ApplicationRepository applicationRepository;
 
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, ApplicationRepository applicationRepository) {
         this.jobRepository = jobRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     public Job createJob(Job job) {
@@ -73,8 +77,20 @@ public class JobService {
         return jobRepository.findByStatusIgnoreCaseOrderByPostedDateDesc(STATUS_ACTIVE);
     }
 
+    public List<Job> getAllJobs() {
+        return jobRepository.findAllByOrderByPostedDateDesc();
+    }
+
     public List<Job> getClosedJobs() {
         return jobRepository.findByStatusIgnoreCaseOrderByPostedDateDesc(STATUS_CLOSED);
+    }
+
+    public long countAllJobs() {
+        return jobRepository.count();
+    }
+
+    public long countJobsByStatus(String status) {
+        return jobRepository.countByStatusIgnoreCase(normalizeStatus(status));
     }
 
     public List<Job> searchActiveJobsByTitle(String title) {
@@ -129,6 +145,11 @@ public class JobService {
 
     public void deleteJob(Long jobId) {
         Job job = getJobById(jobId);
+        if (applicationRepository.existsByJobJobId(jobId)) {
+            throw new JobDeletionBlockedException(
+                    "This job cannot be deleted because applications are linked to it"
+            );
+        }
         jobRepository.delete(job);
     }
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Jobs</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links admin-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:href="@{/admin/applications}">Applications</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Manage Jobs</h1>
+        <div class="button-row">
+            <a class="btn" th:href="@{/admin/jobs/new}">Add New Job</a>
+            <a class="btn btn-secondary" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+            <a class="btn btn-secondary" th:href="@{/jobs}">Public Job Listings</a>
+        </div>
+    </div>
+
+    <p class="success-message" th:if="${successMessage}" th:text="${successMessage}"></p>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <p class="empty-message" th:if="${#lists.isEmpty(jobs)}">No jobs have been posted yet.</p>
+
+    <div class="table-wrapper" th:if="${!#lists.isEmpty(jobs)}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Employment</th>
+                <th>Status</th>
+                <th>Posted</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="job : ${jobs}">
+                <td th:text="${job.jobId}">1</td>
+                <td th:text="${job.title}">Title</td>
+                <td th:text="${job.companyName}">Company</td>
+                <td th:text="${job.location}">Location</td>
+                <td th:text="${job.category}">Category</td>
+                <td th:text="${job.employmentType}">Type</td>
+                <td>
+                    <span class="status-badge"
+                          th:classappend="${job.status == 'ACTIVE' ? ' status-active' : ' status-closed'}"
+                          th:text="${job.status}">ACTIVE</span>
+                </td>
+                <td th:text="${job.postedDate}">Date</td>
+                <td class="actions">
+                    <a class="btn btn-small" th:href="@{/admin/jobs/{jobId}/edit(jobId=${job.jobId})}">Edit</a>
+                    <a class="btn btn-small btn-secondary" th:href="@{/jobs/{jobId}(jobId=${job.jobId})}">Details</a>
+                    <form th:action="@{/admin/jobs/{jobId}/delete(jobId=${job.jobId})}" method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this job?');">
+                        <button class="btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

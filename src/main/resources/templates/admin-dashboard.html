@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="brand" th:href="@{/}">Job Portal</a>
+        <div class="nav-links admin-nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/jobs}">Manage Jobs</a>
+            <a th:href="@{/admin/jobs/new}">Add Job</a>
+            <a th:href="@{/admin/applications}">Applications</a>
+            <a th:href="@{/jobs}">Browse Jobs</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container dashboard">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, <strong th:text="${user.fullName}">Full Name</strong>.</p>
+    <p>Role: <strong th:text="${user.role}">Role</strong></p>
+
+    <section class="stats-grid">
+        <div class="stat-card"><span th:text="${totalJobs}">0</span><p>Total Jobs</p></div>
+        <div class="stat-card"><span th:text="${activeJobs}">0</span><p>Active Jobs</p></div>
+        <div class="stat-card"><span th:text="${closedJobs}">0</span><p>Closed Jobs</p></div>
+        <div class="stat-card"><span th:text="${totalApplicants}">0</span><p>Total Applicants</p></div>
+        <div class="stat-card"><span th:text="${totalApplications}">0</span><p>Total Applications</p></div>
+        <div class="stat-card"><span th:text="${underReviewApplications}">0</span><p>Under Review</p></div>
+        <div class="stat-card"><span th:text="${interviewApplications}">0</span><p>Interview</p></div>
+        <div class="stat-card"><span th:text="${hiredApplications}">0</span><p>Hired</p></div>
+    </section>
+
+    <div class="button-row">
+        <a class="btn" th:href="@{/admin/jobs}">Manage Jobs</a>
+        <a class="btn" th:href="@{/admin/jobs/new}">Add New Job</a>
+        <a class="btn btn-secondary" th:href="@{/admin/applications}">View Applications</a>
+        <a class="btn btn-secondary" th:href="@{/jobs}">Browse Jobs</a>
+    </div>
+</main>
+</body>
+</html>

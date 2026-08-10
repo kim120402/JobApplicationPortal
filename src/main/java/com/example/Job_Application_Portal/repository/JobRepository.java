@@ -12,6 +12,12 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             String status
     );
 
+    List<Job> findAllByOrderByPostedDateDesc();
+
+    long countByStatusIgnoreCase(
+            String status
+    );
+
     // Search active jobs by title
     List<Job> findByTitleContainingIgnoreCaseAndStatusIgnoreCaseOrderByPostedDateDesc(
             String title,
