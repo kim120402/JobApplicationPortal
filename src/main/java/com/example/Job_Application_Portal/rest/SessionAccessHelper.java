@@ -15,8 +15,13 @@ public class SessionAccessHelper {
         this.userService = userService;
     }
 
-    // Check if someone is log in
+
+    /* This method checks if a user is logged in, verifies that the
+    account if it is still exists in the database, and blocks access if the session is invalid
+     */
     public User requireLoggedInUser(HttpSession session) {
+
+        // This line gets the currently logged-in user from the session
         User sessionUser = (User) session.getAttribute("loggedInUser");
 
         // If there is no logged-in user in the session, block the request
@@ -46,8 +51,8 @@ public class SessionAccessHelper {
         return user;
     }
 
+    // Checks that the logged-in user has the APPLICANT role and blocks access if not.
     public User requireApplicant(HttpSession session) {
-
         // before checking the role, it first makes sure the user is logged in.
         User user = requireLoggedInUser(session);
 

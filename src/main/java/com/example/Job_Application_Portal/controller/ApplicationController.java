@@ -130,11 +130,11 @@ public class ApplicationController {
             model.addAttribute("errorMessage", exception.getMessage());
         }
 
-        // if the submission failed send the form data back to apply page
+        // if the submission failed send the form data
         model.addAttribute("user", user);
         model.addAttribute("job", job);
         model.addAttribute("coverLetter", coverLetter);
-        return "apply";
+        return "apply"; // apply page
     }
 
     @GetMapping("/applicant/applications")
